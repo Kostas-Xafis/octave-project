@@ -10,13 +10,13 @@ disp(['The mean difference between the simulation utility values is: ', num2str(
 % Susceptibility to perturbations
 [susceptibility_lvl, susceptibility_lvl_full, susceptibility_chart_color] = susceptibility(mean_diff);
 
-s = [0.1;0.2;0.6]; %perturbations levels
-ntimes = 10^4;
+s = {0.1; 0.2; 0.6}; %perturbations levels
+ntimes = 10^2;
 
-PRR_per_pert = zeros(size(s,1),1);
-PRR_all = zeros(size(s,1), ntimes);
-for si = 1:size(s,1)
-    pert_lvl = s(si);
+PRR_per_pert = zeros(length(s),1);
+PRR_all = zeros(length(s), ntimes);
+for si = 1:length(s)
+    pert_lvl = s{si};
     disp(['Perturbation level: ', num2str(pert_lvl)]);
 
     NPRR = zeros(1,ntimes); %initialization of the matrix of RR for each iteration
@@ -75,15 +75,6 @@ disp(utility);
 disp('The PRR for each perturbation level is:');
 disp([s, PRR_per_pert]);
 
-figure;
-bar(s, PRR_per_pert, 'FaceColor', susceptibility_chart_color);
-xlabel('Perturbation Level');
-ylabel('Probability of Ranking Reversal (PRR)');
-title('PRR for Each Perturbation Level w/ Large utility differences');
-print(['./charts/PRR_per_Perturbation_Level_', susceptibility_lvl,'.jpg'], '-djpg', "-r400");
-close;
+% fileName = ['project_sensitivity_', susceptibility_lvl, '.mat'];
 
-
-fileName = ['project_sensitivity_', susceptibility_lvl, '.mat'];
-
-save(fileName, 's', 'mean_diff', 'ntimes', 'PRR_per_pert', 'PRR_all');
+% save(fileName, 's', 'mean_diff', 'ntimes', 'PRR_per_pert', 'PRR_all');
