@@ -1,11 +1,20 @@
 load study_results.mat;
 source('./rankinversion.m');
 source('./smart_perturbation.m');
+source('./susceptibility.m');
 
-s = [0.1;0.2;0.6]; %perturbations +-10%;
+% Determine the difference between the utility values
+mean_diff = mean(abs(diff(utility)));
+disp(['The mean difference between the simulation utility values is: ', num2str(mean_diff)]);
+
+% Susceptibility to perturbations
+[susceptibility_lvl, susceptibility_lvl_full, susceptibility_chart_color] = susceptibility(mean_diff);
+
+s = [0.1;0.2;0.6]; %perturbations levels
 ntimes = 10^4;
 
 PRR_per_pert = zeros(size(s,1),1);
+PRR_all = zeros(size(s,1), ntimes);
 for si = 1:size(s,1)
     pert_lvl = s(si);
     disp(['Perturbation level: ', num2str(pert_lvl)]);
@@ -20,7 +29,12 @@ for si = 1:size(s,1)
     utilities = ones(ntimes, alternatives_size);
 
     %MC simulation for ntimes iterations
+    NPRR_sum = 0;
     for iter = 1:ntimes
+
+        if mod(iter, 1000) == 0
+            disp(['Iteration: ', num2str(iter)]);
+        end
 
         %Criteria matrix perturbation
         for m = 1:experts
@@ -49,52 +63,27 @@ for si = 1:size(s,1)
         end
 
         NPRR(iter) = rankinversion(utility, utilities(iter,:)); %RR of alternatives priorities for each iteation
+        NPRR_sum += NPRR(iter);
+        PRR_all(si, iter) = NPRR_sum/iter;
     end
 
-    PRR = sum(NPRR)/ntimes;
-
-
-    % disp('The utility for each iteration is:');
-    % disp(utilities);
-    % disp('Simulation Utility:');
-    % disp(utility);
-    disp(['The PRR is: ', num2str(PRR)]);
-
-    PRR_per_pert(si) = PRR;
-
-    % Create and save the PRR vs. number of samples chart
-    NPRR_per_iter = zeros(1,ntimes);
-    for i = 1:ntimes
-        NPRR_per_iter(i) = sum(NPRR(1:i))/i;
-    end
-    
-    figure;
-    plot(1:ntimes, NPRR_per_iter, 'LineWidth', 2);
-    xlabel('Number of Samples');
-    ylabel('PRR Value');
-    title(['PRR vs. Number of Samples for Perturbation Level w/ Large utility differences', num2str(pert_lvl)]);
-    print(['./charts/PRR_vs_Samples_PertLvl_', num2str(pert_lvl), '.png'], '-dpng');
-    close;
-
+    PRR_per_pert(si) = NPRR_sum/ntimes;
 end
 
 disp('Simulation Utility:');
 disp(utility);
-% Calculate the mean difference the simulation utility values
-mean_diff = mean(abs(diff(utility)));
-disp(['The mean difference between the simulation utility values is: ', num2str(mean_diff)]);
-
 disp('The PRR for each perturbation level is:');
 disp([s, PRR_per_pert]);
 
-
 figure;
-bar(s, PRR_per_pert);
+bar(s, PRR_per_pert, 'FaceColor', susceptibility_chart_color);
 xlabel('Perturbation Level');
-ylabel('PRR Value');
+ylabel('Probability of Ranking Reversal (PRR)');
 title('PRR for Each Perturbation Level w/ Large utility differences');
-print('./charts/PRR_per_Perturbation_Level.png', '-dpng');
+print(['./charts/PRR_per_Perturbation_Level_', susceptibility_lvl,'.jpg'], '-djpg', "-r400");
 close;
 
 
-% save project_sensitivity_large_diff.mat
+fileName = ['project_sensitivity_', susceptibility_lvl, '.mat'];
+
+save(fileName, 's', 'mean_diff', 'ntimes', 'PRR_per_pert', 'PRR_all');

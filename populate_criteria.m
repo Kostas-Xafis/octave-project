@@ -10,6 +10,7 @@ function C=populate_criteria(n)
 			break;
 		end
 	end
+	% If C doesn't have a cell with value 1, set a random cell to 1
 	if ~has_one
 		rand_index = randi([1 n],1,1);
 		C(rand_index) = 1;

@@ -1,5 +1,5 @@
 1;
-% S: Source is the ScenarioValue results from ahp_f.m
+% S: Source is the utility results from ahp_f.m
 % T: The array to test if it holds ranking properly
 function [N]=rankinversion(S, T)
   	[n] = length(T);

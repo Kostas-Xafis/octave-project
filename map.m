@@ -17,5 +17,4 @@ function mapped_values = map(arr, A, B, C, D)
     
     % Clamp the values to the target range [C, D]
     mapped_values = max(C, min(D, mapped_values));
-
 end
