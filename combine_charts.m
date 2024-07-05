@@ -39,33 +39,40 @@ end
 
 
 % Combine all line charts together by pertubation level
-for si = 1:size(s,1)
-    figure;
-    for i = 1:3
-        [susceptibility_lvl, susceptibility_lvl_full, susceptibility_chart_color] = susceptibility(sus_mean_diff(i));
-        semilogx(1:ntimes, sus_PRR_all(i, si, :), 'LineWidth', 1, 'Color', susceptibility_chart_color);
-        hold on;
-    end
-    hold off;
-    legend([sprintf('High susceptability\nAverage Utility Difference = '), num2str(sus_mean_diff(1) * 100)(1:4), '%'],
-            [sprintf('Medium susceptability\nAverage Utility Difference = '), num2str(sus_mean_diff(2) * 100)(1:4), '%'],
-            [sprintf('Low susceptability\nAverage Utility Difference = '), num2str(sus_mean_diff(3) * 100)(1:4), '%'],
-            'Location', 'northwest', 'FontSize', 5);
-    xlabel('Iterations');
-    ylabel('Probability of Ranking Reversal (PRR)');
-    title(['PRR per Iteration for Perturbation Level: ', num2str(s(si))]);
+% for si = 1:size(s,1)
+%     figure;
+%     for i = 1:3
+%         [susceptibility_lvl, susceptibility_lvl_full, susceptibility_chart_color] = susceptibility(sus_mean_diff(i));
+%         semilogx(1:ntimes, sus_PRR_all(i, si, :), 'LineWidth', 1, 'Color', susceptibility_chart_color);
+%         hold on;
+%     end
+%     hold off;
+%     legend([sprintf('High susceptability\nAverage Utility Difference = '), num2str(sus_mean_diff(1) * 100)(1:4), '%'],
+%             [sprintf('Medium susceptability\nAverage Utility Difference = '), num2str(sus_mean_diff(2) * 100)(1:4), '%'],
+%             [sprintf('Low susceptability\nAverage Utility Difference = '), num2str(sus_mean_diff(3) * 100)(1:4), '%'],
+%             'Location', 'northwest', 'FontSize', 5);
+%     xlabel('Iterations');
+%     ylabel('Probability of Ranking Reversal (PRR)');
+%     title(['PRR per Iteration for Perturbation Level: ', num2str(s(si))]);
 
-    print(['./charts/all_PRR_per_Iteration_PertLvl_', num2str(s(si)), '.jpg'], '-djpg', "-r600");
-    close;
-end
+%     print(['./charts/all_PRR_per_Iteration_PertLvl_', num2str(s(si)), '.jpg'], '-djpg', "-r600");
+%     close;
+% end
 
 % Combine all bar charts together by pertubation level
 figure;
-bar(s, flipud(sus_PRR_per_pert));
+b = bar(s, flipud(sus_PRR_per_pert));
 legend([sprintf('Low susceptability\nAverage Utility Difference = '), num2str(sus_mean_diff(3) * 100)(1:4), '%'],
         [sprintf('Medium susceptability\nAverage Utility Difference = '), num2str(sus_mean_diff(2) * 100)(1:4), '%'],
         [sprintf('High susceptability\nAverage Utility Difference = '), num2str(sus_mean_diff(1) * 100)(1:4), '%'],
         'FontSize', 5);
+
+%Set the colors of the bars
+for i = 3:-1:1
+    [susceptibility_lvl, susceptibility_lvl_full, susceptibility_chart_color] = susceptibility(sus_mean_diff(i));
+    set(b(4-i), 'FaceColor', susceptibility_chart_color);
+end
+
 xlabel('Perturbation Level');
 ylabel('Probability of Ranking Reversal (PRR)');
 title('PRR for each Perturbation Level');
