@@ -12,6 +12,9 @@ alternatives_size=size(alternatives)(2); %number of alternatives
 criteria_evaluations=ones(criteria_size, experts); %initialize the matrix of criteria
 alternatives_criteria=ones(alternatives_size, criteria_size, experts); %initialize alternatives relative importance for each criteria
 
+% Ratio of experts that didn't evaluate a single criteria
+no_evaluation_ratio = 3 / experts; 
+
 for m=1:experts
     disp(['Expert ', num2str(m)]);
     criteria_evaluations(:,m) = map(populate_criteria(criteria_size), 0, 1, 10, 100);
@@ -19,7 +22,33 @@ for m=1:experts
     for i=1:criteria_size
         alternatives_criteria(:,i,m)= map(populate_criteria(alternatives_size), 0, 1, 10, 100);
     end
+
+    % Introduce unevaluated criteria
+    if rand < no_evaluation_ratio
+        ind = randi([1 criteria_size], 1, 1);
+        % Make sure that the criteria is not the most important one
+        while criteria_evaluations(ind, m) == 100
+            ind = randi([1 criteria_size], 1, 1);
+        end
+        criteria_evaluations(ind, m) = 0;
+    end
 end
+
+% disp("Incomplete Criteria Evaluations");
+% disp(criteria_evaluations);
+
+% Fill the empty criteria evaluations with the mean of the other evaluations
+for i=1:criteria_size
+    % Check if there is a zero in the i-th row
+    for m=1:experts
+        if criteria_evaluations(i,m) == 0
+            criteria_evaluations(i,m) = sum(criteria_evaluations(i,:)) / (experts - 1);
+        end
+    end
+end
+
+% disp("Criteria Evaluations");
+% disp(criteria_evaluations);
 
 % Weights of criteria and alternatives
 criteria_weights = zeros(criteria_size, experts);% initialize the matrix of criteria weights - wk (m)
@@ -62,7 +91,5 @@ display_as_percentages(utility);
 
 mean_diff = mean(abs(diff(utility)));
 disp(['The mean difference between the simulation utility values is: ', num2str(mean_diff)]);
-
-
 
 save study_results.mat;

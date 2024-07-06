@@ -66,15 +66,14 @@ for si = 1:length(s)
         NPRR_sum += NPRR(iter);
         PRR_all(si, iter) = NPRR_sum/iter;
     end
-
     PRR_per_pert(si) = NPRR_sum/ntimes;
 end
 
 disp('Simulation Utility:');
 disp(utility);
 disp('The PRR for each perturbation level is:');
-disp([s, PRR_per_pert]);
+disp([flipud(cell2mat(s)), PRR_per_pert]);
 
-% fileName = ['project_sensitivity_', susceptibility_lvl, '.mat'];
+fileName = ['project_sensitivity_', susceptibility_lvl, '.mat'];
 
-% save(fileName, 's', 'mean_diff', 'ntimes', 'PRR_per_pert', 'PRR_all');
+save(fileName, 's', 'mean_diff', 'ntimes', 'utility', 'PRR_per_pert', 'PRR_all');
