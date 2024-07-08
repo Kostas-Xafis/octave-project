@@ -2,7 +2,7 @@ source('./populate_criteria.m');
 source('./map.m');
 source('./display_as_percentages.m');
 % Hard drive criterias and alternatives
-criteria = {"Price", "Capacity", "Speed", "Power Consumption", "Reliability", "Failure Rate", "Warranty", "Brand", "Noise", "Compatibility"};
+criteria = {"Price", "Capacity", "Read Speed", "Write Speed", "Power Consumption", "Reliability", "Resiliancy ", "Warranty", "Brand", "Compatibility"};
 alternatives = {"Product_A", "Product_B", "Product_C", "Product_D", "Product_E"};
 
 experts=15; %number of experts
