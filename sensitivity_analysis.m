@@ -1,7 +1,12 @@
-load study_results.mat;
+warning('off', 'all');
+source('./getArg.m');
+args = argv();
+
+load(getStrArg(args, {"--input_file", '-i'}, './study_results.mat'));
 source('./rankinversion.m');
 source('./smart_perturbation.m');
 source('./susceptibility.m');
+source('./display_as_percentages.m');
 
 % Determine the difference between the utility values
 mean_diff = mean(abs(diff(utility)));
@@ -11,8 +16,8 @@ disp(['The mean difference between the simulation utility values is: ', num2str(
 [susceptibility_lvl, susceptibility_lvl_full, susceptibility_chart_color] = susceptibility(mean_diff);
 
 s = {0.1; 0.2; 0.6}; %perturbations levels
-ntimes = 10^2;
-
+ntimes = getNumArg(args, {"--iterations", "-n"}, 10000); %number of iterations
+disp(['Number of iterations: ', num2str(ntimes)]);
 PRR_per_pert = zeros(length(s),1);
 PRR_all = zeros(length(s), ntimes);
 for si = 1:length(s)
@@ -72,8 +77,9 @@ end
 disp('Simulation Utility:');
 disp(utility);
 disp('The PRR for each perturbation level is:');
-disp([flipud(cell2mat(s)), PRR_per_pert]);
+disp([cell2mat(s), PRR_per_pert]);
 
-fileName = ['project_sensitivity_', susceptibility_lvl, '.mat'];
+fileName = ['sensitivity_analysis_', susceptibility_lvl, '.mat'];
 
+% Storing data to generate the report.
 save(fileName, 's', 'mean_diff', 'ntimes', 'utility', 'PRR_per_pert', 'PRR_all');

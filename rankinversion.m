@@ -4,7 +4,7 @@
 function [N]=rankinversion(S, T)
   	[n] = length(T);
 
-	N = 1; % Assume the array is not ranked properly
+	N = 0; % Assume the array is ranked properly
 	for i = 1:n-1
 		diffS = S(i+1) - S(i);
         diffT = T(i+1) - T(i);
@@ -15,5 +15,4 @@ function [N]=rankinversion(S, T)
 			break;
 		end
 	end
-
 endfunction

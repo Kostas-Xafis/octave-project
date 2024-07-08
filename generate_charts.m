@@ -8,7 +8,7 @@ sus_PRR_per_pert = zeros(3, 3);
 sus_mean_diff = zeros(3, 1);
 sus_utility = zeros(3, 5);
 for i = 1:3
-    load(['project_sensitivity_' data_by_susceptibility{i}  '.mat']);
+    load(['sensitivity_analysis_' data_by_susceptibility{i}  '.mat']);
     sus_mean_diff(i) = mean_diff;
     sus_PRR_all(i, :, :) = PRR_all;
     sus_PRR_per_pert(i, :) = PRR_per_pert;

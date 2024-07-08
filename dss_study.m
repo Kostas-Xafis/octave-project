@@ -1,16 +1,21 @@
+warning('off', 'all');
 source('./populate_criteria.m');
 source('./map.m');
 source('./display_as_percentages.m');
+source('./getArg.m');
+
+args = argv();
+
 % Hard drive criterias and alternatives
 criteria = {"Price", "Capacity", "Read Speed", "Write Speed", "Power Consumption", "Reliability", "Resiliancy ", "Warranty", "Brand", "Compatibility"};
 alternatives = {"Product_A", "Product_B", "Product_C", "Product_D", "Product_E"};
 
-experts=15; %number of experts
-criteria_size=size(criteria)(2); %number of criteria
-alternatives_size=size(alternatives)(2); %number of alternatives
+experts = getNumArg(args, {"--experts", '-e'}, 15); %number of experts
+criteria_size = size(criteria)(2); %number of criteria
+alternatives_size = size(alternatives)(2); %number of alternatives
 
-criteria_evaluations=ones(criteria_size, experts); %initialize the matrix of criteria
-alternatives_criteria=ones(alternatives_size, criteria_size, experts); %initialize alternatives relative importance for each criteria
+criteria_evaluations = ones(criteria_size, experts); %initialize the matrix of criteria
+alternatives_criteria = ones(alternatives_size, criteria_size, experts); %initialize alternatives relative importance for each criteria
 
 % Ratio of experts that didn't evaluate a single criteria
 no_evaluation_ratio = 3 / experts; 
@@ -20,7 +25,7 @@ for m=1:experts
     criteria_evaluations(:,m) = map(populate_criteria(criteria_size), 0, 1, 10, 100);
 
     for i=1:criteria_size
-        alternatives_criteria(:,i,m)= map(populate_criteria(alternatives_size), 0, 1, 10, 100);
+        alternatives_criteria(:,i,m) = map(populate_criteria(alternatives_size), 0, 1, 10, 100);
     end
 
     % Introduce unevaluated criteria
@@ -92,4 +97,4 @@ display_as_percentages(utility);
 mean_diff = mean(abs(diff(utility)));
 disp(['The mean difference between the simulation utility values is: ', num2str(mean_diff)]);
 
-save study_results.mat;
+save(getStrArg(args, {"--output", "-o"}, "study_results.mat"), "experts", "criteria_size", "alternatives_size", "criteria_evaluations", "alternatives_criteria", "criteria_weights", "alternatives_weights", "utility");
