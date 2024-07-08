@@ -17,7 +17,7 @@ disp(['The mean difference between the simulation utility values is: ', num2str(
 
 s = {0.1; 0.2; 0.6}; %perturbations levels
 ntimes = getNumArg(args, {"--iterations", "-n"}, 10000); %number of iterations
-disp(['Number of iterations: ', num2str(ntimes)]);
+
 PRR_per_pert = zeros(length(s),1);
 PRR_all = zeros(length(s), ntimes);
 for si = 1:length(s)

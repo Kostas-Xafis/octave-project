@@ -1,3 +1,4 @@
+warning('off', 'all');
 source('./susceptibility.m');
 
 data_by_susceptibility = {"hs";"ms";"ls"};
