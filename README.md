@@ -28,4 +28,3 @@ octave-cli ./generate_charts.m
 
 > [!WARNING]
 > This is not thouroughly tested inside the octave gui, so it is recommended to run the commands through the octave-cli.
-
